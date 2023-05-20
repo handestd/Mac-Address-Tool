@@ -57,6 +57,22 @@ namespace Mac_Address_Tool
             if (File.Exists("prefix"))
             {
                 prefix = File.ReadAllText("prefix.txt");
+
+                if (prefix.Contains("."))
+                {
+                    prefix = prefix.Replace(".", "");
+                }
+
+                if (prefix.Contains(":"))
+                {
+                    prefix = prefix.Replace(":", "");
+                }
+
+                if (prefix.Contains("-"))
+                {
+                    prefix = prefix.Replace("-", "");
+                }
+
                 textBox4.Text = prefix;
             }
             if (File.Exists("format.txt"))
@@ -98,6 +114,8 @@ namespace Mac_Address_Tool
             for (int i = 0; i < textBox1.Lines.Length; i++)
             {
                 string item = textBox1.Lines[i].ToUpper();
+                item = item.Replace(".", "");
+                item = item.Replace(":", "");
                 if (item != "")
                 {
 
@@ -299,12 +317,119 @@ namespace Mac_Address_Tool
         {
             File.WriteAllText("prefix.txt", textBox4.Text);
             prefix = textBox4.Text.ToUpper();
+            if (prefix.Contains("."))
+            {
+                prefix = prefix.Replace(".", "");
+            }
+
+            if (prefix.Contains(":"))
+            {
+                prefix = prefix.Replace(":", "");
+            }
+
+            if (prefix.Contains("-"))
+            {
+                prefix = prefix.Replace("-", "");
+            }
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             label4.Text = "[" + textBox3.Lines.Length + "]"; 
                 
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            textBox3.Text = "";
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox3.Text;
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+    
+            int a = 0;
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string[] brands = File.ReadAllLines("brands.txt");
+
+            string[] data = File.ReadAllLines("oui.txt");
+            List<string> list = new List<string>();
+            string content = "";
+            foreach (var item in data)
+            {
+                content += item + Environment.NewLine;
+
+                if (item == "")
+                {
+                    list.Add(content);
+                    content = "";
+                }
+
+
+
+            }
+
+            Dictionary<string, List<string>> rs = new Dictionary<string, List<string>>();
+            foreach (var brand in brands)
+            {
+                List<string> rsChild = new List<string>();
+                foreach (var item2 in list)
+                {
+
+                    if (item2.ToLower().Contains("\t" + brand.ToLower().Trim()) || item2.ToLower().Contains(" " + brand.ToLower().Trim() + " "))
+                    {
+                        string value = item2.Trim();
+                        rsChild.Add(value.Substring(0,8));
+                        int b = 0;
+                    }
+                }
+                rs.Add(brand, rsChild);
+                File.WriteAllText(@"brands/" + brand.ToLower().Trim() + @".txt", string.Join(Environment.NewLine, rsChild));
+            }
+            MessageBox.Show("updated");
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string value = comboBox3.SelectedItem.ToString();
+
+            if (value == "random brand")
+            {
+                comboBox3.SelectedIndex = new Random().Next(2,comboBox3.Items.Count -1);
+            }
+            else if (value == "no select")
+            {
+
+            }
+            else
+            {
+                string[] lines = File.ReadAllLines("brands/" + value.ToLower().Trim() + ".txt");
+                textBox4.Text = lines[new Random().Next(0, lines.Length - 1)];
+            }
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            textBox2.Text = "";
         }
     }
 }
